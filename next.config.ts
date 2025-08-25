@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "utfs.io", // Allow images from utfs.io
       },
+      {
+        protocol: "https",
+        hostname: "**res.cloudinary.com", // Allow Cloudinary images
+      },
     ],
   },
 };

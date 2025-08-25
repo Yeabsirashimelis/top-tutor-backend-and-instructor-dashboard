@@ -4,12 +4,13 @@ import type { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormField,
@@ -19,45 +20,57 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { SectionSchema } from "@/types/types";
-import { useAddSection } from "../_hooks/course-section-hooks";
+import { SectionSchema, Section } from "@/types/types";
+import { useUpdateSection } from "../_hooks/course-section-hooks";
 import { useParams } from "next/navigation";
 
-const AddSection = () => {
+interface EditSectionDialogProps {
+  sectionToEdit: Section | null;
+  setSectionToEdit: (section: Section | null) => void;
+}
+
+const EditSectionDialog = ({
+  sectionToEdit,
+  setSectionToEdit,
+}: EditSectionDialogProps) => {
+  const { toast } = useToast();
+  const { mutate: updateSection, isPending } = useUpdateSection();
+  const { courseId } = useParams();
+
   const form = useForm<z.infer<typeof SectionSchema>>({
     resolver: zodResolver(SectionSchema),
     defaultValues: {
-      title: "",
-      order: 1,
-      sectionDuration: null,
+      title: sectionToEdit?.title?.toString() ?? "",
+      order: sectionToEdit?.order ?? 1,
+      sectionDuration: sectionToEdit?.sectionDuration ?? null,
+    },
+    values: {
+      title: sectionToEdit?.title?.toString() ?? "",
+      order: sectionToEdit?.order ?? 1,
+      sectionDuration: sectionToEdit?.sectionDuration ?? null,
     },
   });
 
-  const { courseId } = useParams();
-
-  const { mutate: addSection, isPending } = useAddSection();
-  const { toast } = useToast();
-
   async function onSubmit(values: z.infer<typeof SectionSchema>) {
-    addSection(
-      {
-        ...values,
-        course: courseId as string,
-      },
+    if (!sectionToEdit) return;
+
+    updateSection(
+      { courseId: courseId as string, sectionId: sectionToEdit._id, ...values },
       {
         onSuccess: () => {
-          form.reset();
           toast({
-            title: "Section added successfully",
-            description: `${values.title} was added to course.`,
+            title: "Section updated successfully",
+            description: `${values.title} was updated.`,
             duration: 3000,
           });
+          setSectionToEdit(null);
         },
         onError: (error) => {
           toast({
-            title: "Error adding section",
+            title: "Error updating section",
             description: error.message,
             variant: "destructive",
           });
@@ -67,11 +80,15 @@ const AddSection = () => {
   }
 
   return (
-    <Card className="w-[90%] md:w-[50%]  shadow-md">
-      <CardHeader>
-        <CardTitle>Add Section</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <Dialog open={!!sectionToEdit} onOpenChange={() => setSectionToEdit(null)}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Edit Section</DialogTitle>
+          <DialogDescription>
+            Update details for this section.
+          </DialogDescription>
+        </DialogHeader>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Title */}
@@ -116,8 +133,7 @@ const AddSection = () => {
                   <FormControl>
                     <Input
                       type="number"
-                      //   {...field}
-                      //   onChange={(e) => field.onChange(Number(e.target.value))}
+                      //  {...field}
                       disabled
                     />
                   </FormControl>
@@ -125,25 +141,32 @@ const AddSection = () => {
                 </FormItem>
               )}
             />
-            <div className="text-sm ml-4 text-blue-600">
-              we will calculate the section duration for you.
+            <div className="text-sm ml-1 text-blue-600">
+              We will calculate the section duration for you.
             </div>
 
-            <CardFooter className="flex justify-end px-0">
-              <button
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSectionToEdit(null)}
+              >
+                Cancel
+              </Button>
+              <Button
                 type="submit"
                 disabled={isPending}
-                className="bg-indigo-600 hover:bg-indigo-500 h-9 px-4 py-2 rounded-md shadow font-bold flex items-center justify-center text-black"
+                className="bg-indigo-600 hover:bg-indigo-500 text-white"
               >
-                 Save Section
+                Save Changes
                 {isPending && <Loader className="ml-2 h-4 w-4 animate-spin" />}
-              </button>
-            </CardFooter>
+              </Button>
+            </DialogFooter>
           </form>
         </Form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-export default AddSection;
+export default EditSectionDialog;

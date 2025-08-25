@@ -13,9 +13,7 @@ import { useRouter } from "next/navigation";
 
 const CoursesTable = () => {
   const router = useRouter();
-
   const { data: courses } = useGetCourses();
-  console.log(courses);
   const [courseToEdit, setCourseToEdit] = useState<Course | null>(null);
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
 
@@ -152,7 +150,15 @@ const CoursesTable = () => {
             variant="outline"
             size="sm"
             className="bg-green-600"
-            onClick={() => router.push(`/courses/${row.original._id}/content`)}
+            onClick={() =>
+              router.push(
+                `/courses/${
+                  row.original._id
+                }/content?title=${encodeURIComponent(
+                  row.original.title as string | number | boolean
+                )}`
+              )
+            }
           >
             Manage Contents
           </Button>
@@ -162,20 +168,25 @@ const CoursesTable = () => {
   ];
 
   return (
-    <div className="overflow-x-auto">
-      <DataTable columns={columns} data={courses || []} />
+    // Only this container scrolls horizontally
+    <div>
+      {/* Ensure table has minimum width */}
+      <div className="w-screen overflow-x-auto">
+        <DataTable columns={columns} data={courses || []} />
+      </div>
+
       {courseToDelete && (
         <DeleteCourseDialog
           courseToDelete={courseToDelete}
           setCourseToDelete={setCourseToDelete}
         />
       )}
-      {courseToEdit && (
+      {/* {courseToEdit && (
         <EditCourseDialog
           courseToEdit={courseToEdit}
           setCourseToEdit={setCourseToEdit}
         />
-      )}
+      )} */}
     </div>
   );
 };

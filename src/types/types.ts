@@ -47,7 +47,7 @@ export type Course = {
 export const SectionSchema = z.object({
   title: z
     .string()
-    .nonempty("course title is needed")
+    .nonempty("section title is needed")
     .min(5, { message: "Title must be at least 5 characters long" })
     .max(40, { message: "Title must be at most 40 characters long" }),
   sectionDuration: z.coerce
@@ -66,4 +66,38 @@ export type Section = {
   title: String;
   order: number;
   sectionDuration?: number;
+};
+
+export const LectureSchema = z.object({
+  title: z
+    .string()
+    .nonempty("Lecture title is required")
+    .min(5, { message: "Title must be at least 5 characters long" })
+    .max(40, { message: "Title must be at most 40 characters long" }),
+
+  order: z.coerce
+    .number()
+    .int("Order must be an integer")
+    .positive("Lecture order must be greater than 0"),
+
+  videoUrl: z
+    .string()
+    .url("Video URL must be a valid URL")
+    .nonempty("A lecture must have a video uploaded"),
+
+  lectureDuration: z
+    .number()
+    .min(0, { message: "Duration cannot be negative" })
+    .default(0),
+
+  section: z.string().nonempty("A lecture must belong to a section"), // sectionId reference
+});
+
+export type Lecture = {
+  _id: string;
+  title: String;
+  order: number;
+  lectureDuration?: number;
+  videoUrl: string;
+  section: string;
 };

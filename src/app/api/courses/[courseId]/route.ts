@@ -4,14 +4,14 @@ import Course from "@/models/courseModel";
 import { courseSchema } from "@/types/types";
 import User from "@/models/userModel";
 
-type GetParams = Promise<{ id: string }>;
+type GetParams = Promise<{ courseId: string }>;
 // GET /api/courses/[id]
 export const GET = async function (
   request: Request,
   { params }: { params: GetParams }
 ) {
   try {
-    const { id } = await params;
+    const { courseId: id } = await params;
 
     const course = await Course.findById(id).populate("instructor");
 
@@ -86,7 +86,7 @@ export const GET = async function (
 //   }
 // };
 
-type DeleteParams = Promise<{ id: string }>;
+type DeleteParams = Promise<{ courseId: string }>;
 export const DELETE = async (
   request: Request,
   { params }: { params: DeleteParams }
@@ -100,7 +100,7 @@ export const DELETE = async (
     if (!session || !session.userId) {
       return NextResponse.json({ message: "unauthorized" }, { status: 401 });
     }
-    const { id } = await params;
+    const { courseId: id } = await params;
 
     const existingCourse = await Course.findById(id);
 
