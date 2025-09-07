@@ -1,30 +1,50 @@
 import { model, models, Schema } from "mongoose";
-import { unique } from "next/dist/build/utils";
 
 const UserSchema = new Schema(
   {
+    // --- Basic User Fields ---
     name: {
       type: String,
       required: true,
       trim: true,
-      maxlength: [40, "A course name must have less or equal 40 character"],
-      minlength: [5, "A course name must have more or equal 10 characters"],
+      maxlength: [40, "Name must have 40 characters or less"],
+      minlength: [5, "Name must be at least 5 characters"],
     },
     username: {
       type: String,
       unique: true,
+      sparse: true, // allows unique but optional
     },
     email: {
       type: String,
       unique: true,
       required: true,
     },
-    password: String,
+    password: String, // optional since Google OAuth
     role: {
-      enum: {
-        values: ["STUDENT", "INSTRUCTOR", "ADMIN"],
-      },
+      type: String,
+      enum: ["STUDENT", "INSTRUCTOR", "ADMIN"],
+      default: "STUDENT",
     },
+    avatar: { type: String },
+
+    // --- Instructor-specific fields ---
+    bio: { type: String },
+    title: { type: String },
+    socialLinks: {
+      type: Map,
+      of: String, // e.g., { twitter: "url", linkedin: "url" }
+    },
+    skills: { type: [String], default: [] },
+    languages: { type: [String], default: [] },
+    isVerified: { type: Boolean, default: false },
+    totalCourses: { type: Number, default: 0 },
+    totalStudents: { type: Number, default: 0 },
+    rating: { type: Number, default: 4.5 },
+    reviewsCount: { type: Number, default: 0 },
+
+    totalEarnings: { type: Number, default: 0 }, // total earned
+    availableEarnings: { type: Number, default: 0 }, // earnings available for payout
   },
   { timestamps: true }
 );

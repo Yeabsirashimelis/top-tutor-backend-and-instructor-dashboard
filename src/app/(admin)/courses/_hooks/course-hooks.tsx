@@ -1,6 +1,5 @@
 import { Course } from "@/types/types";
 import { betterFetch } from "@better-fetch/fetch";
-import { ProductCategory } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // query functions
@@ -63,31 +62,6 @@ const deleteCourse = async (id: string) => {
   throw new Error(error?.message);
 };
 
-const updateCatgory = async (data: {
-  id: string;
-  name?: string;
-  description?: string;
-  coverImage?: string;
-  coverImageKey?: string;
-}) => {
-  const { data: updatedCategory, error } = await betterFetch<ProductCategory>(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/product-categories/${data.id}`,
-    {
-      method: "PUT",
-      body: {
-        name: data.name,
-        description: data.description,
-        coverImage: data.coverImage,
-        coverImageKey: data.coverImage,
-      },
-    }
-  );
-  if (updatedCategory) {
-    return updatedCategory;
-  }
-  throw new Error(error.message);
-};
-
 export const useGetCourses = () => {
   return useQuery({
     queryKey: ["courses"],
@@ -130,22 +104,6 @@ export const useDeleteCourse = () => {
     mutationFn: (id: string) => deleteCourse(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
-    },
-  });
-};
-
-export const useUpdateCategory = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: {
-      id: string;
-      name?: string;
-      description?: string;
-      coverImage?: string;
-      coverImageKey?: string;
-    }) => updateCatgory(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
   });
 };

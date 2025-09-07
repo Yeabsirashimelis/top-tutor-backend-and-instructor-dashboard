@@ -14,12 +14,12 @@ export const GET = async function (request: Request) {
     console.log(session);
     console.log("************************");
 
-    // if (!session || !session.userId) {
-    //   return NextResponse.json({ message: "unauthorized" }, { status: 401 });
-    // }
+    if (!session || !session.userId) {
+      return NextResponse.json({ message: "unauthorized" }, { status: 401 });
+    }
 
     const courses = await Course.find({
-      // instructor: session.userId,
+      instructor: session.userId,
     });
 
     return NextResponse.json({

@@ -1,18 +1,23 @@
 "use client";
 
-import OrdersByMonth from "./components/OrdersByMonth";
-import OrderByStatus from "./components/OrdersByStatus";
-import { cn } from "@/lib/utils";
-import OrdersByCategoryChart from "./components/OrderByCategories";
-import OrdersBySubcategoryChart from "./components/OrderBySubcategories";
-import { useSession } from "next-auth/react";
+import InstructorEditProfile from "./_components/instructor-edit-profile";
+import { useGetInstructor } from "./_hooks/instructor-hooks";
+import { Loader } from "lucide-react";
 
 const Home = () => {
-  const { data: session } = useSession();
+  const { data: instructor, isLoading } = useGetInstructor();
 
   return (
-    <div className="capitalize">
-      WELCOME TO YOUR DASHBOARD, {session?.user?.name}
+    <div className="capitalize space-y-6">
+      <div className="flex items-center space-x-2">
+        <span>WELCOME TO YOUR DASHBOARD,</span>
+        {instructor?.name ? (
+          <span>{instructor.name}</span>
+        ) : (
+          <Loader className="animate-spin h-5 w-5" />
+        )}
+      </div>
+      <InstructorEditProfile />
     </div>
   );
 };
