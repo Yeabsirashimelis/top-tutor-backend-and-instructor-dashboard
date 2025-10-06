@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
       { status: 201, headers }
     );
   } catch (err: any) {
-    console.error(err);
+    console.log(err);
     return NextResponse.json(
       { error: err.message || "Server error" },
       { status: 500, headers }

@@ -14,6 +14,25 @@ export async function OPTIONS() {
   });
 }
 
+
+
+export async function GET() {
+  try {
+    await connectDB();
+
+    const payments = await Payment.find()
+      .populate("user", "name email")
+      .populate("course", "title")
+      .sort({ createdAt: -1 });
+
+    return NextResponse.json({ payments }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ message: "Server error" }, { status: 500 });
+  }
+}
+
+
 export async function POST(req: Request) {
   try {
     await connectDB();

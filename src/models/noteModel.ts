@@ -5,7 +5,7 @@ const NoteSchema: Schema = new Schema(
     userId: { type: String, required: true },
     courseId: { type: String, required: true },
     sectionId: { type: String, required: true },
-    lectureId: { type: String, required: true }, // added lectureId
+    lectureId: { type: String, required: true },
     content: { type: String, required: true },
   },
   {
@@ -13,5 +13,6 @@ const NoteSchema: Schema = new Schema(
   }
 );
 
+delete mongoose.models.Note;
 const Note = models.Note || model("Note", NoteSchema);
 export default Note;

@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Home, Book } from "lucide-react";
+import { Home, Book, DollarSign } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Logout from "./Logout";
@@ -26,11 +26,11 @@ const pages = [
     url: "/courses",
     icon: Book,
   },
-  // {
-  //   title: "Categories",
-  //   url: "/categories",
-  //   icon: Folder,
-  // },
+  {
+    title: "Payments",
+    url: "/payments",
+    icon: DollarSign,
+  },
   // {
   //   title: "Subcategories",
   //   url: "/subcategories",
@@ -79,7 +79,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <Logout />
+        {/* <Logout /> */}
       </SidebarFooter>
     </Sidebar>
   );
