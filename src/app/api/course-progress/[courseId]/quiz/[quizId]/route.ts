@@ -2,17 +2,20 @@ import connectDB from "@/lib/db";
 import UserCourseProgress from "@/models/userProgressModel";
 import { NextResponse } from "next/server";
 
-export async function POST(
+type PostParams = Promise<{ courseId: string; quizId: string }>;
+
+export const POST = async function (
   req: Request,
-  { params }: { params: { courseId: string; quizId: string } }
+  { params }: { params: PostParams }
 ) {
   await connectDB();
   const { userId, score, passed } = await req.json();
+  const { courseId, quizId } = await params;
 
   try {
     const progress = await UserCourseProgress.findOne({
       user: userId,
-      course: params.courseId,
+      course: courseId,
     });
 
     if (!progress) {
@@ -29,11 +32,11 @@ export async function POST(
     }
 
     let quizProgress = progress.quizzesProgress.find(
-      (qp: any) => qp.quiz.toString() === params.quizId
+      (qp: any) => qp.quiz.toString() === quizId
     );
 
     if (!quizProgress) {
-      quizProgress = { quiz: params.quizId, attempts: [] };
+      quizProgress = { quiz: quizId, attempts: [] };
       progress.quizzesProgress.push(quizProgress);
     }
 
@@ -63,4 +66,4 @@ export async function POST(
       }
     );
   }
-}
+};

@@ -2,17 +2,21 @@ import connectDB from "@/lib/db";
 import UserCourseProgress from "@/models/userProgressModel";
 import { NextResponse } from "next/server";
 
-export async function PATCH(
+type PatchParams = Promise<{ courseId: string; lectureId: string }>;
+
+export const PATCH = async function (
   req: Request,
-  { params }: { params: { courseId: string; lectureId: string } }
+  { params }: { params: PatchParams }
 ) {
   await connectDB();
   const { userId, lastPosition, isCompleted } = await req.json();
 
+  const { courseId, lectureId } = await params;
+
   try {
     const progress = await UserCourseProgress.findOne({
       user: userId,
-      course: params.courseId,
+      course: courseId,
     });
 
     if (!progress) {
@@ -29,7 +33,7 @@ export async function PATCH(
     }
 
     const lectureProgress = progress.lecturesProgress.find(
-      (lp: any) => lp.lecture.toString() === params.lectureId
+      (lp: any) => lp.lecture.toString() === lectureId
     );
 
     if (lectureProgress) {
@@ -41,7 +45,7 @@ export async function PATCH(
       }
     } else {
       progress.lecturesProgress.push({
-        lecture: params.lectureId,
+        lecture: lectureId,
         lastPosition: lastPosition || 0,
         isCompleted: !!isCompleted,
         completedAt: isCompleted ? new Date() : null,
@@ -68,4 +72,4 @@ export async function PATCH(
       }
     );
   }
-}
+};

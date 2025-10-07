@@ -41,12 +41,13 @@ export async function GET(req: NextRequest, { params }: { params: GetParams }) {
 }
 
 // POST: create/update rating
+type PostParams = Promise<{ courseId: string }>;
 export async function POST(
   req: NextRequest,
-  { params }: { params: { courseId: string } }
+  { params }: { params: PostParams }
 ) {
   try {
-    const { courseId } = params;
+    const { courseId } = await params;
     const { userId, rating, reviewText } = await req.json();
     if (!courseId || !userId || !rating) {
       return NextResponse.json(

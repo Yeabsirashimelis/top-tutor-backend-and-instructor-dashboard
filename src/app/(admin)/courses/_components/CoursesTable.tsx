@@ -7,7 +7,6 @@ import { useGetCourses } from "../_hooks/course-hooks";
 import CoursesImagesDialogue from "./CoursesImageDialog";
 import { Button } from "@/components/ui/button";
 import DeleteCourseDialog from "./DeleteCourseDialog";
-import EditCourseDialog from "./EditCourseDialog";
 import { Course } from "@/types/types";
 import { useRouter } from "next/navigation";
 

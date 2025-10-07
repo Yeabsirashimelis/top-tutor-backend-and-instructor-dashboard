@@ -257,7 +257,7 @@ export function ContentManagement({ course }: ContentManagementProps) {
                               {lesson.views} views
                             </span>
                           )}
-                          {lesson.questions && (
+                          {/* {lesson.questions && (
                             <span>{lesson.questions} questions</span>
                           )}
                           {lesson.submissions && (
@@ -265,7 +265,7 @@ export function ContentManagement({ course }: ContentManagementProps) {
                           )}
                           {lesson.completions && (
                             <span>{lesson.completions} completions</span>
-                          )}
+                          )} */}
                         </div>
                       </div>
                     </div>

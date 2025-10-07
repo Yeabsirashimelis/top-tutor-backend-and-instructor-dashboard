@@ -5,7 +5,8 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
+
+import { Input as ShadInput } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,6 +39,25 @@ import type { z } from "zod";
 import { instructorSchema } from "@/types/types";
 
 type InstructorFormValues = z.infer<typeof instructorSchema>;
+
+interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  icon?: React.FC<any>;
+}
+
+export const Input: React.FC<CustomInputProps> = ({
+  label,
+  icon: Icon,
+  ...props
+}) => (
+  <div>
+    {label && <label className="block text-sm font-medium">{label}</label>}
+    <div className="relative">
+      {Icon && <Icon className="absolute left-2 top-1/2 -translate-y-1/2" />}
+      <ShadInput {...props} />
+    </div>
+  </div>
+);
 
 export default function InstructorEditProfile() {
   const { data: instructor, isLoading } = useGetInstructor();
@@ -81,6 +101,9 @@ export default function InstructorEditProfile() {
       avatar: "",
     },
   });
+
+  const languages = form?.getValues("languages") ?? [];
+  const skills = form?.getValues("skills") ?? [];
 
   useEffect(() => {
     if (instructor) {
@@ -132,10 +155,14 @@ export default function InstructorEditProfile() {
   };
 
   const addSkill = (skill: string) => {
-    if (skill.trim() && !form.getValues("skills").includes(skill.trim())) {
-      const currentSkills = form.getValues("skills");
-      form.setValue("skills", [...currentSkills, skill.trim()]);
+    const trimmed = skill.trim();
+    if (!trimmed) return;
+
+    const currentSkills = form!.getValues("skills")!;
+    if (!currentSkills.includes(trimmed)) {
+      form!.setValue("skills", [...currentSkills, trimmed]);
     }
+
     setCurrentSkill("");
   };
 
@@ -143,24 +170,25 @@ export default function InstructorEditProfile() {
     const currentSkills = form.getValues("skills");
     form.setValue(
       "skills",
-      currentSkills.filter((skill) => skill !== skillToRemove)
+      currentSkills?.filter((skill) => skill !== skillToRemove)
     );
   };
 
   const addLanguage = (language: string) => {
-    if (
-      language.trim() &&
-      !form.getValues("languages").includes(language.trim())
-    ) {
-      const currentLanguages = form.getValues("languages");
-      form.setValue("languages", [...currentLanguages, language.trim()]);
+    const trimmed = language.trim();
+    if (!trimmed) return;
+
+    const currentLanguages = form?.getValues("languages") ?? [];
+    if (!currentLanguages.includes(trimmed)) {
+      form?.setValue("languages", [...currentLanguages, trimmed]);
     }
+
     setCurrentLanguage("");
   };
 
   const removeLanguage = (languageToRemove: string) => {
-    const currentLanguages = form.getValues("languages");
-    form.setValue(
+    const currentLanguages = form?.getValues("languages") ?? [];
+    form?.setValue(
       "languages",
       currentLanguages.filter((language) => language !== languageToRemove)
     );
@@ -327,8 +355,8 @@ export default function InstructorEditProfile() {
                   Skills
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {form.getValues("skills")?.length > 0 ? (
-                    form.getValues("skills").map((skill, index) => (
+                  {skills.length > 0 ? (
+                    skills.map((skill, index) => (
                       <Badge key={index} variant="secondary">
                         {skill}
                       </Badge>
@@ -346,8 +374,8 @@ export default function InstructorEditProfile() {
                   Languages
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {form.getValues("languages")?.length > 0 ? (
-                    form.getValues("languages").map((language, index) => (
+                  {languages.length > 0 ? (
+                    languages.map((language, index) => (
                       <Badge key={index} variant="outline">
                         {language}
                       </Badge>
@@ -500,7 +528,7 @@ export default function InstructorEditProfile() {
                     </label>
                     <div className="space-y-3">
                       <div className="flex flex-wrap gap-2 min-h-[2rem]">
-                        {form.watch("skills").map((skill, index) => (
+                        {(form.watch("skills") || []).map((skill, index) => (
                           <div
                             key={skill}
                             className={`relative inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
@@ -518,6 +546,7 @@ export default function InstructorEditProfile() {
                           </div>
                         ))}
                       </div>
+
                       <div className="relative">
                         <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -540,24 +569,27 @@ export default function InstructorEditProfile() {
                     </label>
                     <div className="space-y-3">
                       <div className="flex flex-wrap gap-2 min-h-[2rem]">
-                        {form.watch("languages").map((language, index) => (
-                          <div
-                            key={language}
-                            className={`relative inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
-                              languageColors[index % languageColors.length]
-                            }`}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => removeLanguage(language)}
-                              className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                        {(form.watch("languages") || []).map(
+                          (language, index) => (
+                            <div
+                              key={language}
+                              className={`relative inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${
+                                languageColors[index % languageColors.length]
+                              }`}
                             >
-                              ×
-                            </button>
-                            {language}
-                          </div>
-                        ))}
+                              <button
+                                type="button"
+                                onClick={() => removeLanguage(language)}
+                                className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                              >
+                                ×
+                              </button>
+                              {language}
+                            </div>
+                          )
+                        )}
                       </div>
+
                       <div className="relative">
                         <Languages className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
