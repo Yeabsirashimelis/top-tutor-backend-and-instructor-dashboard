@@ -3,11 +3,15 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import Payment from "@/models/paymentModel";
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+type PatchParams = Promise<{id: string}>
+
+export async function PATCH(req: Request, { params }: { params: PatchParams }) {
   try {
     await connectDB();
 
     const { status } = await req.json();
+
+    const {id} = await params;
 
     if (!status || !["approved", "declined"].includes(status)) {
       return NextResponse.json(
@@ -17,7 +21,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const payment = await Payment.findByIdAndUpdate(
-      params.id,
+     id,
       { status },
       { new: true }
     );
