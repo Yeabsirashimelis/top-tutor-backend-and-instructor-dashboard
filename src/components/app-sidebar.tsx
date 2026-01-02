@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Home, Book, DollarSign } from "lucide-react";
+import { Home, Book, DollarSign, BarChart2, Users, Megaphone, MessageSquare } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Logout from "./Logout";
@@ -22,6 +22,21 @@ const pages = [
     icon: Home,
   },
   {
+    title: "Analytics",
+    url: "/analytics",
+    icon: BarChart2,
+  },
+  {
+    title: "Students",
+    url: "/students",
+    icon: Users,
+  },
+  {
+    title: "Announcements",
+    url: "/announcements",
+    icon: Megaphone,
+  },
+  {
     title: "courses",
     url: "/courses",
     icon: Book,
@@ -31,11 +46,6 @@ const pages = [
     url: "/payments",
     icon: DollarSign,
   },
-  // {
-  //   title: "Subcategories",
-  //   url: "/subcategories",
-  //   icon: Folders,
-  // },
 ];
 
 export function AppSidebar() {
