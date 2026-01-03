@@ -3,10 +3,12 @@ import z from "zod";
 import User from "@/models/userModel";
 import { getSessionUser } from "../../../../utils/getSessionUser";
 import { instructorSchema } from "@/types/types";
+import connectDB from "@/lib/db";
 
 // GET /api/instructor
 export const GET = async () => {
   try {
+    await connectDB();
     const session = await getSessionUser();
 
     if (!session || !session.userId) {
@@ -44,6 +46,7 @@ export const GET = async () => {
 // PUT /api/instructor
 export const PUT = async (request: Request) => {
   try {
+    await connectDB();
     const session = await getSessionUser();
 
     if (!session || !session.userId) {

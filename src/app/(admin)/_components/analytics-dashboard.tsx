@@ -42,7 +42,7 @@ interface AnalyticsDashboardProps {
 
 export default function AnalyticsDashboard({ instructorId }: AnalyticsDashboardProps) {
   const [period, setPeriod] = useState(30);
-  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [selectedCourse, setSelectedCourse] = useState<string>("all");
 
   const { data, isLoading, error } = useGetInstructorAnalytics(
     instructorId,
@@ -104,7 +104,7 @@ export default function AnalyticsDashboard({ instructorId }: AnalyticsDashboardP
               <SelectValue placeholder="All Courses" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Courses</SelectItem>
+              <SelectItem value="all">All Courses</SelectItem>
               {courses.map((course) => (
                 <SelectItem key={course.courseId} value={course.courseId}>
                   {course.title}

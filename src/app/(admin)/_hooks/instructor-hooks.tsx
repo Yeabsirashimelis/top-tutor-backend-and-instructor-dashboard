@@ -7,8 +7,12 @@ export const getInstructor = async () => {
   const res = await betterFetch<{ message: string; user: any }>(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/instructor`
   );
-  if (!res.data?.user)
-    throw new Error(res.data?.message || "Instructor not found");
+  
+  // Return null instead of throwing to prevent infinite retries
+  if (!res.data?.user) {
+    console.error("Instructor fetch failed:", res.data?.message);
+    return null;
+  }
 
   return res.data.user;
 };
@@ -35,6 +39,8 @@ export const useGetInstructor = () => {
   return useQuery({
     queryKey: ["instructor"],
     queryFn: () => getInstructor(),
+    retry: 1, // Only retry once instead of infinite retries
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 };
 

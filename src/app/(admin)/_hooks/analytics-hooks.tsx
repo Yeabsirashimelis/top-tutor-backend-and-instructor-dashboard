@@ -59,7 +59,8 @@ export const useGetInstructorAnalytics = (
     queryKey: ["instructor-analytics", instructorId, courseId, period],
     queryFn: async () => {
       let url = `/api/instructor/analytics?instructorId=${instructorId}&period=${period}`;
-      if (courseId) {
+      // Only add courseId if it's not "all" (which means show all courses)
+      if (courseId && courseId !== "all") {
         url += `&courseId=${courseId}`;
       }
 
