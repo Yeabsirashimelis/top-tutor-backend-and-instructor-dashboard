@@ -28,5 +28,5 @@ const courseReviewSchema = new Schema(
 
 courseReviewSchema.index({ courseId: 1, userId: 1 }, { unique: true });
 
-const CourseReview = models.CourseReview || model("Note", courseReviewSchema);
+const CourseReview = models.CourseReview || model("CourseReview", courseReviewSchema);
 export default CourseReview;

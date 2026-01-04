@@ -32,6 +32,11 @@ export async function GET(req: NextRequest) {
         level: 1,
         currentLevelPoints: 0,
         pointsToNextLevel: 100,
+        totalLecturesCompleted: 0,
+        totalQuizzesPassed: 0,
+        totalCoursesCompleted: 0,
+        currentStreak: 0,
+        longestStreak: 0,
       });
     }
 
@@ -96,12 +101,26 @@ export async function POST(req: NextRequest) {
         level: 1,
         currentLevelPoints: 0,
         pointsToNextLevel: 100,
+        totalLecturesCompleted: 0,
+        totalQuizzesPassed: 0,
+        totalCoursesCompleted: 0,
+        currentStreak: 0,
+        longestStreak: 0,
       });
     }
 
     // Add points
     profile.totalPoints += points;
     profile.currentLevelPoints += points;
+
+    // Update activity counters based on type
+    if (type === "lecture_completed") {
+      profile.totalLecturesCompleted = (profile.totalLecturesCompleted || 0) + 1;
+    } else if (type === "quiz_passed" || type === "quiz_perfect") {
+      profile.totalQuizzesPassed = (profile.totalQuizzesPassed || 0) + 1;
+    } else if (type === "course_completed") {
+      profile.totalCoursesCompleted = (profile.totalCoursesCompleted || 0) + 1;
+    }
 
     // Check for level up
     while (profile.currentLevelPoints >= profile.pointsToNextLevel) {
