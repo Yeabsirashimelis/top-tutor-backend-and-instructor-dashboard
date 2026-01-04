@@ -1,0 +1,301 @@
+// Badge Definitions for Auto-Awarding System
+
+export const BADGE_DEFINITIONS = [
+  // LEARNING BADGES
+  {
+    badgeId: "first_lecture",
+    name: "First Steps",
+    description: "Complete your first lecture",
+    icon: "🎯",
+    category: "learning",
+    rarity: "common",
+    points: 10,
+    criteria: {
+      type: "lectures_completed",
+      count: 1,
+    },
+  },
+  {
+    badgeId: "scholar",
+    name: "Scholar",
+    description: "Complete 10 lectures",
+    icon: "📚",
+    category: "learning",
+    rarity: "common",
+    points: 50,
+    criteria: {
+      type: "lectures_completed",
+      count: 10,
+    },
+  },
+  {
+    badgeId: "knowledge_seeker",
+    name: "Knowledge Seeker",
+    description: "Complete 50 lectures",
+    icon: "🧠",
+    category: "learning",
+    rarity: "rare",
+    points: 200,
+    criteria: {
+      type: "lectures_completed",
+      count: 50,
+    },
+  },
+  {
+    badgeId: "master_learner",
+    name: "Master Learner",
+    description: "Complete 100 lectures",
+    icon: "🎓",
+    category: "learning",
+    rarity: "epic",
+    points: 500,
+    criteria: {
+      type: "lectures_completed",
+      count: 100,
+    },
+  },
+
+  // QUIZ BADGES
+  {
+    badgeId: "quiz_novice",
+    name: "Quiz Novice",
+    description: "Pass your first quiz",
+    icon: "✅",
+    category: "achievement",
+    rarity: "common",
+    points: 15,
+    criteria: {
+      type: "quizzes_passed",
+      count: 1,
+    },
+  },
+  {
+    badgeId: "quiz_master",
+    name: "Quiz Master",
+    description: "Pass 10 quizzes",
+    icon: "🏆",
+    category: "achievement",
+    rarity: "rare",
+    points: 100,
+    criteria: {
+      type: "quizzes_passed",
+      count: 10,
+    },
+  },
+  {
+    badgeId: "perfectionist",
+    name: "Perfectionist",
+    description: "Get 100% score on 5 quizzes",
+    icon: "💯",
+    category: "achievement",
+    rarity: "epic",
+    points: 250,
+    criteria: {
+      type: "perfect_quizzes",
+      count: 5,
+    },
+  },
+  {
+    badgeId: "quiz_champion",
+    name: "Quiz Champion",
+    description: "Pass 50 quizzes",
+    icon: "🎖️",
+    category: "achievement",
+    rarity: "legendary",
+    points: 750,
+    criteria: {
+      type: "quizzes_passed",
+      count: 50,
+    },
+  },
+
+  // STREAK BADGES
+  {
+    badgeId: "consistent",
+    name: "Consistent",
+    description: "Maintain a 3-day learning streak",
+    icon: "🔥",
+    category: "streak",
+    rarity: "common",
+    points: 25,
+    criteria: {
+      type: "streak",
+      count: 3,
+    },
+  },
+  {
+    badgeId: "dedicated",
+    name: "Dedicated",
+    description: "Maintain a 7-day learning streak",
+    icon: "⚡",
+    category: "streak",
+    rarity: "rare",
+    points: 75,
+    criteria: {
+      type: "streak",
+      count: 7,
+    },
+  },
+  {
+    badgeId: "unstoppable",
+    name: "Unstoppable",
+    description: "Maintain a 30-day learning streak",
+    icon: "💪",
+    category: "streak",
+    rarity: "epic",
+    points: 300,
+    criteria: {
+      type: "streak",
+      count: 30,
+    },
+  },
+  {
+    badgeId: "legend",
+    name: "Legend",
+    description: "Maintain a 100-day learning streak",
+    icon: "👑",
+    category: "streak",
+    rarity: "legendary",
+    points: 1000,
+    criteria: {
+      type: "streak",
+      count: 100,
+    },
+  },
+
+  // LEVEL BADGES
+  {
+    badgeId: "beginner",
+    name: "Beginner",
+    description: "Reach Level 5",
+    icon: "🌱",
+    category: "achievement",
+    rarity: "common",
+    points: 50,
+    criteria: {
+      type: "level",
+      count: 5,
+    },
+  },
+  {
+    badgeId: "intermediate",
+    name: "Intermediate",
+    description: "Reach Level 10",
+    icon: "🌿",
+    category: "achievement",
+    rarity: "rare",
+    points: 150,
+    criteria: {
+      type: "level",
+      count: 10,
+    },
+  },
+  {
+    badgeId: "advanced",
+    name: "Advanced",
+    description: "Reach Level 20",
+    icon: "🌳",
+    category: "achievement",
+    rarity: "epic",
+    points: 400,
+    criteria: {
+      type: "level",
+      count: 20,
+    },
+  },
+  {
+    badgeId: "elite",
+    name: "Elite",
+    description: "Reach Level 50",
+    icon: "🏔️",
+    category: "achievement",
+    rarity: "legendary",
+    points: 1500,
+    criteria: {
+      type: "level",
+      count: 50,
+    },
+  },
+
+  // COURSE COMPLETION BADGES
+  {
+    badgeId: "first_graduate",
+    name: "First Graduate",
+    description: "Complete your first course",
+    icon: "📜",
+    category: "achievement",
+    rarity: "common",
+    points: 100,
+    criteria: {
+      type: "courses_completed",
+      count: 1,
+    },
+  },
+  {
+    badgeId: "overachiever",
+    name: "Overachiever",
+    description: "Complete 5 courses",
+    icon: "🎊",
+    category: "achievement",
+    rarity: "rare",
+    points: 300,
+    criteria: {
+      type: "courses_completed",
+      count: 5,
+    },
+  },
+  {
+    badgeId: "course_collector",
+    name: "Course Collector",
+    description: "Complete 10 courses",
+    icon: "🏅",
+    category: "achievement",
+    rarity: "epic",
+    points: 800,
+    criteria: {
+      type: "courses_completed",
+      count: 10,
+    },
+  },
+
+  // SPECIAL BADGES
+  {
+    badgeId: "speed_demon",
+    name: "Speed Demon",
+    description: "Complete a course in under 7 days",
+    icon: "⚡",
+    category: "special",
+    rarity: "rare",
+    points: 200,
+    criteria: {
+      type: "course_speed",
+      days: 7,
+    },
+  },
+  {
+    badgeId: "early_bird",
+    name: "Early Bird",
+    description: "Complete 10 lectures before 8 AM",
+    icon: "🌟",
+    category: "special",
+    rarity: "rare",
+    points: 100,
+    criteria: {
+      type: "early_learning",
+      count: 10,
+    },
+  },
+  {
+    badgeId: "night_owl",
+    name: "Night Owl",
+    description: "Complete 10 lectures after 10 PM",
+    icon: "🦉",
+    category: "special",
+    rarity: "rare",
+    points: 100,
+    criteria: {
+      type: "late_learning",
+      count: 10,
+    },
+  },
+];

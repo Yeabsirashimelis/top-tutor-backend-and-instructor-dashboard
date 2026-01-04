@@ -8,6 +8,7 @@ import { StudentManagement } from "./_components/student-management";
 import { ContentManagement } from "./_components/content-management";
 import { ReviewsManagement } from "./_components/reviews-management";
 import { CourseSettings } from "./_components/content-settings";
+import ChallengesManagement from "./_components/challenges-management";
 import { InstructorHeader } from "./_components/instructor-header";
 import { useGetCourse } from "../_hooks/course-hooks";
 
@@ -56,11 +57,12 @@ export default function InstructorCoursePage() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="analytics" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="students">Students</TabsTrigger>
             <TabsTrigger value="content">Content</TabsTrigger>
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            <TabsTrigger value="challenges">Challenges</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
@@ -78,6 +80,10 @@ export default function InstructorCoursePage() {
 
           <TabsContent value="reviews" className="space-y-6">
             <ReviewsManagement course={course} />
+          </TabsContent>
+
+          <TabsContent value="challenges" className="space-y-6">
+            <ChallengesManagement courseId={courseId as string} />
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">

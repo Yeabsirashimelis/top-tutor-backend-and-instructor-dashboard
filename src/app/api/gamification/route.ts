@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import { UserGamification, PointTransaction } from "@/models/gamificationModel";
+import { checkAndAwardBadges, checkTimeBasedBadges } from "@/lib/badge-checker";
 
 // GET /api/gamification?userId={id} - Get user's gamification profile
 export async function GET(req: NextRequest) {
@@ -122,6 +123,9 @@ export async function POST(req: NextRequest) {
       profile.totalCoursesCompleted = (profile.totalCoursesCompleted || 0) + 1;
     }
 
+    // Track previous level for badge checking
+    const previousLevel = profile.level;
+
     // Check for level up
     while (profile.currentLevelPoints >= profile.pointsToNextLevel) {
       profile.currentLevelPoints -= profile.pointsToNextLevel;
@@ -130,6 +134,37 @@ export async function POST(req: NextRequest) {
     }
 
     await profile.save();
+
+    // Check for badges after saving stats
+    let newBadges: any[] = [];
+    
+    // Check badges based on activity type
+    if (type === "lecture_completed") {
+      const lectureBadges = await checkAndAwardBadges(userId, "lecture");
+      newBadges.push(...lectureBadges);
+      
+      // Check time-based badges
+      const hour = new Date().getHours();
+      const timeBadges = await checkTimeBasedBadges(userId, hour);
+      newBadges.push(...timeBadges);
+    } else if (type === "quiz_passed") {
+      const quizBadges = await checkAndAwardBadges(userId, "quiz");
+      newBadges.push(...quizBadges);
+    } else if (type === "quiz_perfect") {
+      const perfectBadges = await checkAndAwardBadges(userId, "quiz_perfect");
+      newBadges.push(...perfectBadges);
+      const quizBadges = await checkAndAwardBadges(userId, "quiz");
+      newBadges.push(...quizBadges);
+    } else if (type === "course_completed") {
+      const courseBadges = await checkAndAwardBadges(userId, "course");
+      newBadges.push(...courseBadges);
+    }
+    
+    // Check for level-based badges if level increased
+    if (profile.level > previousLevel) {
+      const levelBadges = await checkAndAwardBadges(userId, "level");
+      newBadges.push(...levelBadges);
+    }
 
     // Create transaction record
     const transaction = await PointTransaction.create({
@@ -145,6 +180,7 @@ export async function POST(req: NextRequest) {
         message: "Points awarded successfully",
         profile,
         transaction,
+        newBadges, // Return newly earned badges
       },
       {
         status: 200,

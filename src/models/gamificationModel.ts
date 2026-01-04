@@ -183,10 +183,23 @@ const LeaderboardSchema = new Schema(
 // Daily Challenge
 const DailyChallengeSchema = new Schema(
   {
+    course: {
+      type: Schema.Types.ObjectId,
+      ref: "Course",
+      required: true,
+    },
+    instructor: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     date: {
       type: Date,
       required: true,
-      unique: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
     challenges: [
       {
@@ -198,16 +211,22 @@ const DailyChallengeSchema = new Schema(
             "study_time",
             "perfect_quiz",
             "complete_section",
+            "complete_specific_lecture",
+            "pass_specific_quiz",
           ],
         },
         target: Number,
         points: Number,
         description: String,
+        specificId: String, // For specific lecture/quiz challenges
       },
     ],
   },
   { timestamps: true }
 );
+
+// Add compound index for course and date
+DailyChallengeSchema.index({ course: 1, date: 1 });
 
 // User Challenge Progress
 const UserChallengeProgressSchema = new Schema(
@@ -215,6 +234,11 @@ const UserChallengeProgressSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    challenge: {
+      type: Schema.Types.ObjectId,
+      ref: "DailyChallenge",
       required: true,
     },
     date: {
@@ -233,7 +257,7 @@ const UserChallengeProgressSchema = new Schema(
   { timestamps: true }
 );
 
-UserChallengeProgressSchema.index({ user: 1, date: 1 }, { unique: true });
+UserChallengeProgressSchema.index({ user: 1, challenge: 1, date: 1 }, { unique: true });
 PointTransactionSchema.index({ user: 1, createdAt: -1 });
 LeaderboardSchema.index({ type: 1, "period.start": 1 });
 

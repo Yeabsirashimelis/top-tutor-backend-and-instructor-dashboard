@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import { UserGamification, PointTransaction } from "@/models/gamificationModel";
+import { checkAndAwardBadges } from "@/lib/badge-checker";
 
 // POST /api/gamification/streak - Update user's learning streak
 export async function POST(req: NextRequest) {
@@ -99,11 +100,15 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Check for streak-based badges
+    const newBadges = await checkAndAwardBadges(userId, "streak");
+
     return NextResponse.json(
       {
         profile,
         streakBroken,
         bonusPoints,
+        newBadges,
       },
       {
         headers: {
