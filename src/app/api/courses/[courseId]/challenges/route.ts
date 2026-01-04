@@ -14,10 +14,18 @@ export async function GET(
     const userId = searchParams.get("userId");
     const { courseId } = params;
 
+    console.log("📡 [BACKEND] GET challenges for course:", { courseId, userId });
+
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
@@ -31,10 +39,18 @@ export async function GET(
       isActive: true,
     }).sort({ date: 1 });
 
+    console.log("📦 [BACKEND] Found challenges:", challenges.length);
+
     if (challenges.length === 0) {
       return NextResponse.json(
         { challenges: [], userProgress: [] },
-        { status: 200 }
+        { 
+          status: 200,
+          headers: {
+            "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
@@ -49,17 +65,23 @@ export async function GET(
 
         // Initialize progress if doesn't exist
         if (!progress) {
-          progress = await UserChallengeProgress.create({
-            user: userId,
-            challenge: challenge._id,
-            date: today,
-            challenges: challenge.challenges.map((c: any) => ({
+          const progressChallenges = challenge.challenges.map((c: any) => {
+            return {
               type: c.type,
               completed: false,
               progress: 0,
               target: c.target,
-            })),
+            };
           });
+
+          progress = new UserChallengeProgress({
+            user: userId,
+            challenge: challenge._id,
+            date: today,
+            challenges: progressChallenges,
+          });
+
+          await progress.save();
         }
 
         return {
@@ -70,18 +92,32 @@ export async function GET(
       })
     );
 
+    console.log("✅ [BACKEND] Returning challenges and progress");
+
     return NextResponse.json(
       {
         challenges,
         userProgress,
       },
-      { status: 200 }
+      { 
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
+          "Content-Type": "application/json",
+        },
+      }
     );
   } catch (error) {
-    console.error("Error fetching course challenges:", error);
+    console.error("❌ [BACKEND] Error fetching course challenges:", error);
     return NextResponse.json(
-      { error: "Failed to fetch challenges" },
-      { status: 500 }
+      { error: "Failed to fetch challenges", details: error instanceof Error ? error.message : "Unknown error" },
+      { 
+        status: 500,
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }

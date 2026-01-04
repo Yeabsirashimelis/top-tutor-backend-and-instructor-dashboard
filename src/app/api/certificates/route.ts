@@ -107,12 +107,9 @@ export async function POST(req: NextRequest) {
       skillsAcquired: course.learningOutcomes || [],
     });
 
-    // Update gamification profile
-    const profile = await UserGamification.findOne({ user: userId });
-    if (profile) {
-      profile.totalCoursesCompleted += 1;
-      await profile.save();
-    }
+    // Note: Course completion counter should be updated via gamification API
+    // with type="course_completed" when the course is actually completed
+    // Don't increment here to avoid double counting
 
     return NextResponse.json(
       {

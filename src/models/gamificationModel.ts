@@ -247,10 +247,22 @@ const UserChallengeProgressSchema = new Schema(
     },
     challenges: [
       {
-        type: String,
-        completed: Boolean,
-        progress: Number,
-        target: Number,
+        type: {
+          type: String,
+          required: true,
+        },
+        completed: {
+          type: Boolean,
+          default: false,
+        },
+        progress: {
+          type: Number,
+          default: 0,
+        },
+        target: {
+          type: Number,
+          required: true,
+        },
       },
     ],
   },
