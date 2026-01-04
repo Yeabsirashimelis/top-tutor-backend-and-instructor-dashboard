@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       },
       {
         headers: {
-          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
           "Content-Type": "application/json",
         },
       }
@@ -33,7 +33,13 @@ export async function GET(req: NextRequest) {
     console.error("Error fetching badges:", error);
     return NextResponse.json(
       { message: "Failed to fetch badges" },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }
@@ -48,7 +54,13 @@ export async function POST(req: NextRequest) {
     if (!userId || !badgeId) {
       return NextResponse.json(
         { message: "User ID and Badge ID are required" },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
@@ -56,7 +68,13 @@ export async function POST(req: NextRequest) {
     if (!badge) {
       return NextResponse.json(
         { message: "Badge not found" },
-        { status: 404 }
+        { 
+          status: 404,
+          headers: {
+            "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
@@ -70,7 +88,13 @@ export async function POST(req: NextRequest) {
     if (hasBadge) {
       return NextResponse.json(
         { message: "Badge already earned" },
-        { status: 400 }
+        { 
+          status: 400,
+          headers: {
+            "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+            "Content-Type": "application/json",
+          },
+        }
       );
     }
 
@@ -112,7 +136,7 @@ export async function POST(req: NextRequest) {
       {
         status: 200,
         headers: {
-          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
           "Content-Type": "application/json",
         },
       }
@@ -121,7 +145,13 @@ export async function POST(req: NextRequest) {
     console.error("Error awarding badge:", error);
     return NextResponse.json(
       { message: "Failed to award badge" },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }
@@ -130,9 +160,9 @@ export async function OPTIONS() {
   return new Response(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
-      "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type,Authorization",
+      "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });
 }

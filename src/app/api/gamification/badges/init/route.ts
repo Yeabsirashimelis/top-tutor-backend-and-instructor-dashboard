@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       {
         status: 200,
         headers: {
-          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
           "Content-Type": "application/json",
         },
       }
@@ -28,7 +28,24 @@ export async function GET(req: NextRequest) {
     console.error("Error initializing badges:", error);
     return NextResponse.json(
       { message: "Failed to initialize badges" },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  });
 }

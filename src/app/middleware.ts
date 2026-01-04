@@ -4,9 +4,10 @@ import type { NextRequest } from "next/server";
 export function middleware(req: NextRequest) {
   const res = NextResponse.next();
 
+  // Allow requests from the client (default to localhost:3000 for development)
   res.headers.set(
     "Access-Control-Allow-Origin",
-    process.env.CLIENT_LINK || "http://localhost:3001"
+    process.env.CLIENT_LINK || "http://localhost:3000"
   );
   res.headers.set(
     "Access-Control-Allow-Methods",
@@ -15,6 +16,10 @@ export function middleware(req: NextRequest) {
   res.headers.set(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization"
+  );
+  res.headers.set(
+    "Access-Control-Allow-Credentials",
+    "true"
   );
 
   if (req.method === "OPTIONS") {

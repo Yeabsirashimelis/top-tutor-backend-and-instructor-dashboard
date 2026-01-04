@@ -38,16 +38,41 @@ export async function GET(req: NextRequest) {
       totalCoursesCompleted: profile.totalCoursesCompleted,
     }));
 
-    return NextResponse.json({
-      leaderboard: formattedLeaderboard,
-      total: formattedLeaderboard.length,
-      timeframe,
-    });
+    return NextResponse.json(
+      {
+        leaderboard: formattedLeaderboard,
+        total: formattedLeaderboard.length,
+        timeframe,
+      },
+      {
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+          "Content-Type": "application/json",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching leaderboard:", error);
     return NextResponse.json(
       { error: "Failed to fetch leaderboard" },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
+}
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  });
 }

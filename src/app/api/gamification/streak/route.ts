@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
       },
       {
         headers: {
-          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
           "Content-Type": "application/json",
         },
       }
@@ -121,7 +121,13 @@ export async function POST(req: NextRequest) {
     console.error("Error updating streak:", error);
     return NextResponse.json(
       { message: "Failed to update streak" },
-      { status: 500 }
+      { 
+        status: 500,
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+          "Content-Type": "application/json",
+        },
+      }
     );
   }
 }
@@ -130,9 +136,9 @@ export async function OPTIONS() {
   return new Response(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
-      "Access-Control-Allow-Methods": "POST,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type,Authorization",
+      "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });
 }
