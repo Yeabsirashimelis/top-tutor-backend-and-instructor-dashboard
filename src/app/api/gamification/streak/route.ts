@@ -24,9 +24,9 @@ export async function POST(req: NextRequest) {
         user: userId,
         totalPoints: 0,
         level: 1,
-        currentStreak: 1,
-        longestStreak: 1,
-        lastActivityDate: new Date(),
+        currentStreak: 0,
+        longestStreak: 0,
+        lastActivityDate: null,
       });
       
       return NextResponse.json({ profile, streakBroken: false });
@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
       lastActivity.setHours(0, 0, 0, 0);
     }
 
-    const diffTime = lastActivity ? today.getTime() - lastActivity.getTime() : 0;
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffTime = lastActivity ? today.getTime() - lastActivity.getTime() : -1;
+    const diffDays = lastActivity ? Math.floor(diffTime / (1000 * 60 * 60 * 24)) : -1;
 
     let streakBroken = false;
     let bonusPoints = 0;
@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
     if (diffDays === 0) {
       // Same day, no change
       return NextResponse.json({ profile, streakBroken: false });
-    } else if (diffDays === 1) {
-      // Consecutive day, increment streak
+    } else if (diffDays === 1 || diffDays === -1) {
+      // Consecutive day, increment streak (or first day if diffDays === -1)
       profile.currentStreak += 1;
       
       // Award bonus points for milestones

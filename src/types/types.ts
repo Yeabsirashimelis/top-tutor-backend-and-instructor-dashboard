@@ -37,6 +37,7 @@ export type Course = {
   skillLevel: string;
   courseDuration: number;
   learningOutcomes: string[];
+  isPublished?: boolean;
 
   ratingsAverage?: number;
   ratingsQuantity?: number;

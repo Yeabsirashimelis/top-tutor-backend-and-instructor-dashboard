@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if badge already earned
-    const hasBadge = profile.badges.some((b) => b.badgeId === badgeId);
+    const hasBadge = profile.badges.some((b: any) => b.badgeId === badgeId);
     if (hasBadge) {
       return NextResponse.json(
         { message: "Badge already earned" },

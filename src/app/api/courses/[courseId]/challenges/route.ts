@@ -1,31 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-import { DailyChallenge, UserChallengeProgress } from "@/models/gamificationModel";
+import {
+  DailyChallenge,
+  UserChallengeProgress,
+} from "@/models/gamificationModel";
 
 // GET /api/courses/[courseId]/challenges?userId={id} - Get challenges for a course (student view)
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { courseId: string } }
-) {
+type GetParams = Promise<{ courseId: string }>;
+export async function GET(req: NextRequest, { params }: { params: GetParams }) {
   try {
     await connectDB();
 
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
-    const { courseId } = params;
+    const { courseId } = await params;
 
-    console.log("📡 [BACKEND] GET challenges for course:", { courseId, userId });
+    console.log("📡 [BACKEND] GET challenges for course:", {
+      courseId,
+      userId,
+    });
 
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },
-        { 
+        {
           status: 400,
           headers: {
             "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
             "Content-Type": "application/json",
           },
-        }
+        },
       );
     }
 
@@ -44,13 +48,13 @@ export async function GET(
     if (challenges.length === 0) {
       return NextResponse.json(
         { challenges: [], userProgress: [] },
-        { 
+        {
           status: 200,
           headers: {
             "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
             "Content-Type": "application/json",
           },
-        }
+        },
       );
     }
 
@@ -89,7 +93,7 @@ export async function GET(
           date: challenge.date,
           challenges: progress.challenges,
         };
-      })
+      }),
     );
 
     console.log("✅ [BACKEND] Returning challenges and progress");
@@ -99,25 +103,28 @@ export async function GET(
         challenges,
         userProgress,
       },
-      { 
+      {
         status: 200,
         headers: {
           "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("❌ [BACKEND] Error fetching course challenges:", error);
     return NextResponse.json(
-      { error: "Failed to fetch challenges", details: error instanceof Error ? error.message : "Unknown error" },
-      { 
+      {
+        error: "Failed to fetch challenges",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      {
         status: 500,
         headers: {
           "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "*",
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   }
 }

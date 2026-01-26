@@ -1,19 +1,44 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Eye, Edit, Share2, MoreHorizontal } from "lucide-react";
+import { Eye, Edit, Share2, MoreHorizontal, Globe, GlobeLock } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTogglePublishCourse } from "../../_hooks/course-hooks";
+import { useToast } from "@/hooks/use-toast";
 
 interface InstructorHeaderProps {
   course: any;
 }
 
 export function InstructorHeader({ course }: InstructorHeaderProps) {
+  const { mutate: togglePublish, isPending } = useTogglePublishCourse();
+  const { toast } = useToast();
+
+  const handleTogglePublish = () => {
+    togglePublish(course._id, {
+      onSuccess: (data) => {
+        toast({
+          title: "Success",
+          description: data.message,
+        });
+      },
+      onError: (error: Error) => {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to update publish status",
+          variant: "destructive",
+        });
+      },
+    });
+  };
+
   return (
     <div className="bg-gradient-to-r from-blue-600 to-purple-700 text-white">
       <div className="container mx-auto px-4 py-8">
@@ -28,15 +53,15 @@ export function InstructorHeader({ course }: InstructorHeaderProps) {
               </Badge>
               <Badge
                 variant={
-                  course.status === "published" ? "default" : "secondary"
+                  course.isPublished ? "default" : "secondary"
                 }
                 className={
-                  course.status === "published"
+                  course.isPublished
                     ? "bg-green-500"
                     : "bg-yellow-500"
                 }
               >
-                {course.status === "published" ? "Published" : "Draft"}
+                {course.isPublished ? "Published" : "Draft"}
               </Badge>
             </div>
 
@@ -65,32 +90,55 @@ export function InstructorHeader({ course }: InstructorHeaderProps) {
                 <span className="text-white/60">Course Preview</span>
               </div>
 
-              <div className="flex gap-2">
-                <Button variant="secondary" size="sm" className="flex-1">
-                  <Eye className="w-4 h-4 mr-2" />
-                  Preview
+              <div className="space-y-2">
+                <Button
+                  onClick={handleTogglePublish}
+                  disabled={isPending}
+                  variant={course.isPublished ? "destructive" : "default"}
+                  size="sm"
+                  className="w-full"
+                >
+                  {isPending ? (
+                    "Updating..."
+                  ) : course.isPublished ? (
+                    <>
+                      <GlobeLock className="w-4 h-4 mr-2" />
+                      Unpublish Course
+                    </>
+                  ) : (
+                    <>
+                      <Globe className="w-4 h-4 mr-2" />
+                      Publish Course
+                    </>
+                  )}
                 </Button>
-                <Button variant="secondary" size="sm" className="flex-1">
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit
-                </Button>
-                <Button variant="secondary" size="sm">
-                  <Share2 className="w-4 h-4" />
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="secondary" size="sm">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem>Duplicate Course</DropdownMenuItem>
-                    <DropdownMenuItem>Export Data</DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive">
-                      Delete Course
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div className="flex gap-2">
+                  <Button variant="secondary" size="sm" className="flex-1">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Preview
+                  </Button>
+                  <Button variant="secondary" size="sm" className="flex-1">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                  <Button variant="secondary" size="sm">
+                    <Share2 className="w-4 h-4" />
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="secondary" size="sm">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>Duplicate Course</DropdownMenuItem>
+                      <DropdownMenuItem>Export Data</DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive">
+                        Delete Course
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             </Card>
           </div>

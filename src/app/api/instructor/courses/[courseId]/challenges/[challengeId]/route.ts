@@ -4,10 +4,9 @@ import { DailyChallenge } from "@/models/gamificationModel";
 import { getSessionUser } from "@/../../utils/getSessionUser";
 
 // PUT /api/instructor/courses/[courseId]/challenges/[challengeId] - Update challenge
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { courseId: string; challengeId: string } }
-) {
+type GetParams = Promise<{ courseId: string; challengeId: string }>;
+
+export async function PUT(req: NextRequest, { params }: { params: GetParams }) {
   try {
     await connectDB();
     const sessionData = await getSessionUser();
@@ -16,7 +15,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { challengeId } = params;
+    const { challengeId } = await params;
     const body = await req.json();
     const { challenges, isActive } = body;
 
@@ -29,7 +28,7 @@ export async function PUT(
     if (!challenge) {
       return NextResponse.json(
         { error: "Challenge not found or unauthorized" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -44,21 +43,22 @@ export async function PUT(
         message: "Challenge updated successfully",
         challenge,
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error updating challenge:", error);
     return NextResponse.json(
       { error: "Failed to update challenge" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // DELETE /api/instructor/courses/[courseId]/challenges/[challengeId] - Delete challenge
+type DeleteParams = Promise<{ courseId: string; challengeId: string }>;
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { courseId: string; challengeId: string } }
+  { params }: { params: DeleteParams },
 ) {
   try {
     await connectDB();
@@ -68,7 +68,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { challengeId } = params;
+    const { challengeId } = await params;
 
     // Find and delete challenge
     const challenge = await DailyChallenge.findOneAndDelete({
@@ -79,19 +79,19 @@ export async function DELETE(
     if (!challenge) {
       return NextResponse.json(
         { error: "Challenge not found or unauthorized" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     return NextResponse.json(
       { message: "Challenge deleted successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error deleting challenge:", error);
     return NextResponse.json(
       { error: "Failed to delete challenge" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

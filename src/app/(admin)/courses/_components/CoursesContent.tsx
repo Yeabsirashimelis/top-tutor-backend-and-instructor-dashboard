@@ -6,7 +6,7 @@ import CoursesTable from "./CoursesTable";
 const CoursesContent = () => {
   return (
     <div className="mx-auto space-y-3 w-full overflow-auto">
-      <div className="flex flex-row justify-between items-center">
+      <div className="flex flex-row justify-between items-center relative z-20">
         <div>
           <h1 className={cn("scroll-m-20 text-3xl font-bold tracking-tight")}>
             Courses You Add

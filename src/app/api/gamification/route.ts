@@ -118,8 +118,68 @@ export async function POST(req: NextRequest) {
     if (type === "lecture_completed") {
       profile.totalLecturesCompleted = (profile.totalLecturesCompleted || 0) + 1;
     } else if (type === "quiz_passed" || type === "quiz_perfect") {
+      // Check if this quiz has already been passed
+      const quizId = metadata?.quizId;
+      if (quizId) {
+        const existingQuizPass = await PointTransaction.findOne({
+          user: userId,
+          type: { $in: ["quiz_passed", "quiz_perfect"] },
+          "metadata.quizId": quizId,
+        });
+        
+        if (existingQuizPass) {
+          console.log(`⚠️ Quiz ${quizId} already passed by user ${userId}. Skipping duplicate.`);
+          return NextResponse.json(
+            {
+              message: "Quiz already passed - points already awarded",
+              profile,
+              transaction: null,
+              newBadges: [],
+              alreadyCompleted: true,
+            },
+            {
+              status: 200,
+              headers: {
+                "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        }
+      }
+      
       profile.totalQuizzesPassed = (profile.totalQuizzesPassed || 0) + 1;
     } else if (type === "course_completed") {
+      // Check if this course has already been completed
+      const courseId = metadata?.courseId;
+      if (courseId) {
+        const existingCompletion = await PointTransaction.findOne({
+          user: userId,
+          type: "course_completed",
+          "metadata.courseId": courseId,
+        });
+        
+        if (existingCompletion) {
+          console.log(`⚠️ Course ${courseId} already completed by user ${userId}. Skipping duplicate.`);
+          return NextResponse.json(
+            {
+              message: "Course already completed - points already awarded",
+              profile,
+              transaction: null,
+              newBadges: [],
+              alreadyCompleted: true,
+            },
+            {
+              status: 200,
+              headers: {
+                "Access-Control-Allow-Origin": process.env.CLIENT_LINK || "http://localhost:3000",
+                "Content-Type": "application/json",
+              },
+            }
+          );
+        }
+      }
+      
       profile.totalCoursesCompleted = (profile.totalCoursesCompleted || 0) + 1;
     }
 

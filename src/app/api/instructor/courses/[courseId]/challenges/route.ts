@@ -4,10 +4,8 @@ import { DailyChallenge } from "@/models/gamificationModel";
 import { getSessionUser } from "../../../../../../../utils/getSessionUser";
 
 // GET /api/instructor/courses/[courseId]/challenges - Get all challenges for a course
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { courseId: string } }
-) {
+type GetParams = Promise<{ courseId: string }>;
+export async function GET(req: NextRequest, { params }: { params: GetParams }) {
   try {
     await connectDB();
     const sessionData = await getSessionUser();
@@ -16,7 +14,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { courseId } = params;
+    const { courseId } = await params;
 
     // Get all challenges for this course
     const challenges = await DailyChallenge.find({
@@ -29,15 +27,16 @@ export async function GET(
     console.error("Error fetching course challenges:", error);
     return NextResponse.json(
       { error: "Failed to fetch challenges" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // POST /api/instructor/courses/[courseId]/challenges - Create new challenge
+type PostParams = Promise<{ courseId: string }>;
 export async function POST(
   req: NextRequest,
-  { params }: { params: { courseId: string } }
+  { params }: { params: PostParams },
 ) {
   try {
     await connectDB();
@@ -47,7 +46,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { courseId } = params;
+    const { courseId } = await params;
     const body = await req.json();
     const { date, challenges } = body;
 
@@ -55,7 +54,7 @@ export async function POST(
     if (!date || !challenges || !Array.isArray(challenges)) {
       return NextResponse.json(
         { error: "Invalid input. Date and challenges array required." },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,7 +67,7 @@ export async function POST(
     if (existingChallenge) {
       return NextResponse.json(
         { error: "Challenge already exists for this date" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -86,13 +85,13 @@ export async function POST(
         message: "Challenge created successfully",
         challenge: newChallenge,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Error creating challenge:", error);
     return NextResponse.json(
       { error: "Failed to create challenge" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

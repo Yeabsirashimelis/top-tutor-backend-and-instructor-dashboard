@@ -67,6 +67,10 @@ const CourseSchema = new Schema(
         message: "Please provide at least one learning outcome",
       },
     },
+    isPublished: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

@@ -62,6 +62,19 @@ const deleteCourse = async (id: string) => {
   throw new Error(error?.message);
 };
 
+const togglePublishCourse = async (id: string) => {
+  const { data, error } = await betterFetch<{ message: string; course: Course }>(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/courses/${id}/publish`,
+    {
+      method: "PATCH",
+    }
+  );
+  if (data) {
+    return data;
+  }
+  throw new Error(error?.message);
+};
+
 export const useGetCourses = () => {
   return useQuery({
     queryKey: ["courses"],
@@ -104,6 +117,17 @@ export const useDeleteCourse = () => {
     mutationFn: (id: string) => deleteCourse(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+  });
+};
+
+export const useTogglePublishCourse = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => togglePublishCourse(id),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      queryClient.invalidateQueries({ queryKey: ["course", id] });
     },
   });
 };

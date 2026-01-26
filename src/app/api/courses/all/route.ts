@@ -17,7 +17,7 @@ export async function GET() {
      const User = (await import("@/models/userModel")).default;
 
     await connectDB();
-    const courses = await Course.find({}).populate("instructor");
+    const courses = await Course.find({ isPublished: true }).populate("instructor");
 
     return new NextResponse(
       JSON.stringify({ message: "courses fetched successfully", courses }),

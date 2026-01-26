@@ -40,32 +40,33 @@ export async function checkAndAwardBadges(
     // Check each badge's criteria
     for (const badgeDef of relevantBadges) {
       // Check if user already has this badge
-      const hasBadge = profile.badges.some((b) => b.badgeId === badgeDef.badgeId);
+      const hasBadge = profile.badges.some((b: any) => b.badgeId === badgeDef.badgeId);
       if (hasBadge) continue;
 
       // Check if criteria is met
       let criteriaMet = false;
       const criteria = badgeDef.criteria;
 
+      const count = criteria.count || 0;
       switch (criteria.type) {
         case "lectures_completed":
-          criteriaMet = (profile.totalLecturesCompleted || 0) >= criteria.count;
+          criteriaMet = (profile.totalLecturesCompleted || 0) >= count;
           break;
         case "quizzes_passed":
-          criteriaMet = (profile.totalQuizzesPassed || 0) >= criteria.count;
+          criteriaMet = (profile.totalQuizzesPassed || 0) >= count;
           break;
         case "perfect_quizzes":
           // We'll need to track this separately - for now, estimate
           criteriaMet = false; // TODO: Add perfect quiz counter
           break;
         case "courses_completed":
-          criteriaMet = (profile.totalCoursesCompleted || 0) >= criteria.count;
+          criteriaMet = (profile.totalCoursesCompleted || 0) >= count;
           break;
         case "level":
-          criteriaMet = profile.level >= criteria.count;
+          criteriaMet = profile.level >= count;
           break;
         case "streak":
-          criteriaMet = profile.currentStreak >= criteria.count;
+          criteriaMet = profile.currentStreak >= count;
           break;
       }
 
@@ -159,7 +160,7 @@ export async function checkTimeBasedBadges(userId: string, hour: number) {
     // Early bird badge (before 8 AM)
     if (hour < 8) {
       const earlyBirdBadge = BADGE_DEFINITIONS.find(b => b.badgeId === "early_bird");
-      const hasBadge = profile.badges.some(b => b.badgeId === "early_bird");
+      const hasBadge = profile.badges.some((b: any) => b.badgeId === "early_bird");
       
       if (!hasBadge && earlyBirdBadge) {
         // For now, just award it after first early morning lecture
@@ -187,7 +188,7 @@ export async function checkTimeBasedBadges(userId: string, hour: number) {
     // Night owl badge (after 10 PM)
     if (hour >= 22) {
       const nightOwlBadge = BADGE_DEFINITIONS.find(b => b.badgeId === "night_owl");
-      const hasBadge = profile.badges.some(b => b.badgeId === "night_owl");
+      const hasBadge = profile.badges.some((b: any) => b.badgeId === "night_owl");
       
       if (!hasBadge && nightOwlBadge) {
         profile.badges.push({
